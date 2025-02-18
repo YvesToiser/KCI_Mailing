@@ -1,6 +1,4 @@
 import requests
-import schedule
-import time
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -64,8 +62,5 @@ def job():
     except Exception as e:
         print(f'Failed to send email: {e}')
 
-schedule.every().day.at('11:00').do(job)
-
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+if __name__ == "__main__":
+    job()
