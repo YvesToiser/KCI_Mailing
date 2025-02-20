@@ -33,30 +33,40 @@ def send_email(subject, body):
     server.sendmail(FROM_EMAIL, TO_EMAILS, msg.as_string())
     server.quit()
 
-@retry(tries=3, delay=120)  # Retry 3 times with a 2-minute delay
+@retry(tries=3, delay=40)  # Retry 3 times with a 2-minute delay
 def fetch_data_from_api():
+    print('Function fetching data from API()')
     url = 'https://kci-api-dxek.onrender.com/KC'
     response = requests.get(url)
     response.raise_for_status()  # Raise an exception for HTTP errors
+    print(response)
+    print(response.json())
     return response.json()
 
 def job():
+    print('Function job()')
     try:
         data = fetch_data_from_api()
+        print(data)
         if data.get('isInjured'):
+            print('is YES')
             answer = "YES"
             injury_type = data.get('InjuryType', 'unknown injury type')
             text = f"Kingsley Coman is currently injured. He suffers from {injury_type}."
         elif not data.get('isInjured'):
+            print('is NO')
             answer = "NO"
             last_injury_date = data.get('lastInjuryDate', 'unknown date')
             text = f"Kingsley Coman is not currently injured. He has not been injured since {last_injury_date}."
         else:
+            print('is else')
             answer = "UNKNOWN"
             text = "The injury status of Kingsley Coman is unknown."
 
         subject = 'Is Kingsley Coman injured today?'
+        print(subject)
         body = f'{answer}! {text}'
+        print(body)
         send_email(subject, body)
         print('Email sent successfully')
     except Exception as e:
