@@ -1,3 +1,4 @@
+import threading
 import requests
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -72,5 +73,20 @@ def job():
     except Exception as e:
         print(f'Failed to send email: {e}')
 
+def run_job_with_timeout(timeout):
+    def job_wrapper():
+        job()
+
+    thread = threading.Thread(target=job_wrapper)
+    thread.start()
+    thread.join(timeout)
+    if thread.is_alive():
+        raise TimeoutError("Script execution timed out")
+
+timeout_duration = 150
+
 if __name__ == "__main__":
-    job()
+    try:
+        run_job_with_timeout(timeout_duration)
+    except TimeoutError as e:
+        print(f"Error: {e}")
