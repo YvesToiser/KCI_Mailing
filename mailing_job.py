@@ -83,7 +83,7 @@ def run_job_with_timeout(timeout):
     if thread.is_alive():
         raise TimeoutError("Script execution timed out")
 
-timeout_duration = 150
+timeout_duration = 300
 
 if __name__ == "__main__":
     try:
